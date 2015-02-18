@@ -5,9 +5,9 @@ import "time"
 type Thermal interface {
 	Records() []IgcRecord
 	AverageStrength() float64
-	HeightGain() int64
-	StartHeight() int64
-	EndHeight() int64
+	HeightGain() int
+	StartHeight() int
+	EndHeight() int
 	Date() time.Time
 	Duration() time.Duration
 	WindDir() int64

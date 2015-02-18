@@ -26,6 +26,18 @@ func (t ThermalImpl) AverageStrength() float64 {
 	return averageHeightGain / time
 }
 
+func (t ThermalImpl) HeightGain() int {
+	return t.EndHeight() - t.StartHeight()
+}
+
+func (t ThermalImpl) StartHeight() int {
+	return t.ThermalRecords[0].GpsAltitude()
+}
+
+func (t ThermalImpl) EndHeight() int {
+	return t.ThermalRecords[len(t.ThermalRecords)-1].GpsAltitude()
+}
+
 func (t ThermalImpl) Time() time.Time {
 	return t.ThermalRecords[0].Time()
 }
