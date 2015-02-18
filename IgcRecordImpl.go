@@ -36,14 +36,14 @@ func (i IgcRecordImpl) IsValid() bool {
 	return i.Record[24:25] == "A"
 }
 
-func (i IgcRecordImpl) PreassureAlt() int {
+func (i IgcRecordImpl) PreassureAltitude() int {
 	offset := i.calcOffset()
 	alt, _ := strconv.ParseInt(i.Record[24+offset:29+offset], 10, 64)
 
 	return int(alt)
 }
 
-func (i IgcRecordImpl) GpsAlt() int {
+func (i IgcRecordImpl) GpsAltitude() int {
 	offset := i.calcOffset()
 	alt, _ := strconv.ParseInt(i.Record[29+offset:34+offset], 10, 64)
 
