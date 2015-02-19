@@ -5,8 +5,14 @@ import (
 	"time"
 )
 
+var recTime time.Time
+
 type IgcRecordImpl struct {
 	Record string
+}
+
+func (i IgcRecordImpl) SetDate(t time.Time) {
+	recTime = t
 }
 
 func (i IgcRecordImpl) RecordString() string {
@@ -22,7 +28,7 @@ func (i IgcRecordImpl) Time() time.Time {
 	minute, _ := strconv.ParseInt(i.Record[3:5], 10, 64)
 	second, _ := strconv.ParseInt(i.Record[5:7], 10, 64)
 
-	return time.Date(2015, time.February, 12, int(hour), int(minute), int(second), 0, time.UTC)
+	return time.Date(recTime.Year(), recTime.Month(), recTime.Day(), int(hour), int(minute), int(second), 0, time.UTC)
 }
 
 func (i IgcRecordImpl) Position() Position {
