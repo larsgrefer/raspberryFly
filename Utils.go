@@ -10,7 +10,23 @@ import (
 	"time"
 )
 
-func ReadRecord(url string, port int64) (IgcRecord, error) {
+func ReadNRecords(url string, port int64, count int, dateRead bool) []IgcRecord {
+	var records []IgcRecord
+	var lastRec IgcRecord
+
+	for len(records) < count {
+		rec, _ := ReadRecord(url, port, dateRead)
+		if lastRec == nil || rec.Time() != lastRec.Time() {
+			records = append(records, rec)
+			lastRec = rec
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	return records
+}
+
+func ReadRecord(url string, port int64, dateRead bool) (IgcRecord, error) {
 	response, err := http.Get(url + ":" + strconv.FormatInt(port, 10) + "/record")
 	if err != nil {
 		return nil, err
@@ -23,7 +39,13 @@ func ReadRecord(url string, port int64) (IgcRecord, error) {
 
 		record := IgcRecordImpl{string(contents)}
 
-		date, _ := ReadDate(url, port)
+		var date time.Time
+
+		if dateRead {
+			date, _ = ReadDate(url, port)
+		} else {
+			date = time.Now()
+		}
 		record.SetDate(date)
 
 		return record, nil
