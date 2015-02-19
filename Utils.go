@@ -10,6 +10,38 @@ import (
 	"time"
 )
 
+func findCircles(records []IgcRecord) bool {
+	if len(records) < 10 {
+		return false
+	}
+
+	turnGes := 0.0
+
+	for i := 0; i < len(records)-2; i++ {
+		rec := records[len(records)-(i+1)]
+		lastRec := records[len(records)-(i+2)]
+		preLastRec := records[len(records)-(i+3)]
+		time := rec.Time().Sub(lastRec.Time()).Seconds()
+
+		course := int(lastRec.Position().CourseTo(rec.Position()))
+		lastCourse := int(preLastRec.Position().CourseTo(lastRec.Position()))
+
+		turn := float64(course-lastCourse) / time
+
+		if turn > 100 {
+			turn = float64(-(360-course)-lastCourse) / time
+		} else if turn < -100 {
+			turn = float64((360-lastCourse)+course) / time
+		}
+		turnGes += math.Abs(turn)
+	}
+
+	if turnGes > 90 {
+		return true
+	}
+	return false
+}
+
 func ReadNRecords(url string, port int64, count int, dateRead bool) []IgcRecord {
 	var records []IgcRecord
 	var lastRec IgcRecord

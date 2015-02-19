@@ -11,5 +11,5 @@ type Thermal interface {
 	Date() time.Time
 	Duration() time.Duration
 	WindDir() int64
-	WindStpeed() int64
+	WindSpeed() int64
 }

@@ -77,3 +77,7 @@ func (t ThermalImpl) WindDir() int64 {
 func (t ThermalImpl) WindSpeed() int64 {
 	return int64((t.ThermalRecords[0].Position().DistanceTo(t.ThermalRecords[len(t.ThermalRecords)-1].Position())) / t.Duration().Hours())
 }
+
+func (t ThermalImpl) Date() time.Time {
+	return t.ThermalRecords[0].Time()
+}
