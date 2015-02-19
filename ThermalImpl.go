@@ -1,6 +1,7 @@
 package raspberryFly
 
 import (
+	"math"
 	"time"
 )
 
@@ -44,4 +45,35 @@ func (t ThermalImpl) Time() time.Time {
 
 func (t ThermalImpl) Duration() time.Duration {
 	return t.ThermalRecords[len(t.ThermalRecords)-1].Time().Sub(t.ThermalRecords[0].Time())
+}
+
+func (t ThermalImpl) WindDir() int64 {
+	startCourse := t.ThermalRecords[0].Position().CourseTo(t.ThermalRecords[1].Position())
+
+	courseSum := 0.0
+	lastCourse := -1.0
+
+	var fittingPos Position
+	fittingCourse := 0.0
+
+	for i := len(t.ThermalRecords) - 1; i > 1 && courseSum < 360; i-- {
+		course := t.ThermalRecords[i-1].Position().CourseTo(t.ThermalRecords[i].Position())
+		if lastCourse == -1 {
+			fittingPos = t.ThermalRecords[i-1].Position()
+			fittingCourse = course
+		} else {
+			courseSum += math.Abs(course - lastCourse)
+			if math.Abs(course-startCourse) < math.Abs(fittingCourse-startCourse) {
+				fittingPos = t.ThermalRecords[i-1].Position()
+				fittingCourse = course
+			}
+		}
+		lastCourse = course
+	}
+
+	return int64(t.ThermalRecords[0].Position().CourseTo(fittingPos))
+}
+
+func (t ThermalImpl) WindSpeed() int64 {
+	return int64((t.ThermalRecords[0].Position().DistanceTo(t.ThermalRecords[len(t.ThermalRecords)-1].Position())) / t.Duration().Hours())
 }
