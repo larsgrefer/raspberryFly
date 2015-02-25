@@ -5,12 +5,13 @@ import (
 	"io/ioutil"
 	"math"
 	"net/http"
+	"raspberryFly/model"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func findCircles(records []IgcRecord) bool {
+func FindCircles(records []model.IgcRecord) bool {
 	if len(records) < 10 {
 		return false
 	}
@@ -42,9 +43,9 @@ func findCircles(records []IgcRecord) bool {
 	return false
 }
 
-func ReadNRecords(url string, port int64, count int, dateRead bool) []IgcRecord {
-	var records []IgcRecord
-	var lastRec IgcRecord
+func ReadNRecords(url string, port int64, count int, dateRead bool) []model.IgcRecord {
+	var records []model.IgcRecord
+	var lastRec model.IgcRecord
 
 	for len(records) < count {
 		rec, _ := ReadRecord(url, port, dateRead)
@@ -58,7 +59,7 @@ func ReadNRecords(url string, port int64, count int, dateRead bool) []IgcRecord 
 	return records
 }
 
-func ReadRecord(url string, port int64, dateRead bool) (IgcRecord, error) {
+func ReadRecord(url string, port int64, dateRead bool) (model.IgcRecord, error) {
 	response, err := http.Get(url + ":" + strconv.FormatInt(port, 10) + "/record")
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func ReadRecord(url string, port int64, dateRead bool) (IgcRecord, error) {
 			return nil, err
 		}
 
-		record := IgcRecordImpl{string(contents)}
+		record := model.IgcRecordImpl{string(contents)}
 
 		var date time.Time
 
@@ -107,7 +108,7 @@ func ReadDate(url string, port int64) (time.Time, error) {
 	return time.Now(), nil
 }
 
-func PrintRecord(rec IgcRecord) {
+func PrintRecord(rec model.IgcRecord) {
 
 	fmt.Print("Time:", rec.Time())
 	fmt.Print(" Lat:", rec.Position().Lat())

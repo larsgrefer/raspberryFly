@@ -1,4 +1,4 @@
-package raspberryFly
+package model
 
 import "time"
 

@@ -1,4 +1,4 @@
-package raspberryFly
+package model
 
 type Coordinate interface {
 	CoordinateString() string
