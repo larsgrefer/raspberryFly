@@ -26,13 +26,13 @@ func AnalyseFile(pathname string) ([]model.IgcRecord, []model.Thermal) {
 			rec := model.IgcRecordImpl{scanner.Text()}
 			rec.SetDate(raspberryFly.ConvertIgcFilenameToDate(pathname))
 			records = append(records, rec)
-			if len(records) >= 13 {
-				circle = raspberryFly.FindCircles(records[len(records)-13 : len(records)-1])
+			if len(records) >= 15 {
+				circle = raspberryFly.FindCircles(records[len(records)-15 : len(records)-1])
 				if circle {
 					tempForThermals = append(tempForThermals, rec)
 				} else if len(tempForThermals) > 0 {
 					t := model.ThermalImpl{circumsizeRecords(tempForThermals)}
-					if t.HeightGain() > 0 && t.Duration().Minutes() >= 1 {
+					if t.HeightGain() > 0 && t.Duration().Minutes() > 1 {
 						thermals = append(thermals, t)
 					}
 					tempForThermals = make([]model.IgcRecord, 0)
@@ -58,6 +58,12 @@ func circumsizeRecords(records []model.IgcRecord) []model.IgcRecord {
 		lastCourse := int(preLastRec.Position().CourseTo(lastRec.Position()))
 
 		turn := float64(course-lastCourse) / time
+
+		if turn > 100 {
+			turn = float64(-(360-course)-lastCourse) / time
+		} else if turn < -100 {
+			turn = float64((360-lastCourse)+course) / time
+		}
 
 		fmt.Println(course, lastCourse, turn)
 

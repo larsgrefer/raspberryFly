@@ -37,7 +37,7 @@ func FindCircles(records []model.IgcRecord) bool {
 		turnGes += math.Abs(turn)
 	}
 
-	if turnGes > 90 {
+	if turnGes > 9*float64(len(records)) {
 		return true
 	}
 	return false
